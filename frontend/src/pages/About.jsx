@@ -1,8 +1,8 @@
 import React from 'react'
-
+import '../App.css'
 function About() {
   return (
-    <div>
+    <div className='universal'>
       i am about
     </div>
   )

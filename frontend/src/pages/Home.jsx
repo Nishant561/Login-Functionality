@@ -1,8 +1,8 @@
 import React from 'react'
-
+import '../App.css'
 function Home() {
   return (
-    <div>
+    <div className='home universal '>
       i am home
     </div>
   )

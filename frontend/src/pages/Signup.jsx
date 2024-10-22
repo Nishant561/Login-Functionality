@@ -1,9 +1,12 @@
 import React from 'react'
-
+import '../App.css'
 function Signup() {
   return (
     <>
-        i am signup
+    <div className='universal'>
+      i am signup
+    </div>
+       
     </>
   )
 }

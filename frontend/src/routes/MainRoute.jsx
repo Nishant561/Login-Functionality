@@ -1,17 +1,18 @@
-import React, { lazy ,Suspense } from "react";
+import React, { lazy, Suspense } from "react";
 
-import { createBrowserRouter, RouterProvider,Navigate } from "react-router-dom";
+import {
+  createBrowserRouter,
+  RouterProvider,
+  Navigate,
+} from "react-router-dom";
 import Loading from "../components/Loading";
 
-
-
-
-const Home = lazy(()=>import('../pages/Home'))
-const Profile = lazy(()=>import('../pages/Profile'))
-const About = lazy(()=>import('../pages/About'))
-const Sigin = lazy(()=>import('../pages/Sigin'))
-const Signup = lazy(()=>import('../pages/Signup'))
-const Layout = lazy(()=>import('../Layout/Layout'))
+const Home = lazy(() => import("../pages/Home"));
+const Profile = lazy(() => import("../pages/Profile"));
+const About = lazy(() => import("../pages/About"));
+const Sigin = lazy(() => import("../pages/Sigin"));
+const Signup = lazy(() => import("../pages/Signup"));
+const Layout = lazy(() => import("../Layout/Layout"));
 
 function MainRoute() {
   const router = createBrowserRouter([
@@ -21,7 +22,7 @@ function MainRoute() {
       children: [
         {
           path: "",
-          element: <Navigate to={'home'} replace={true} />,
+          element: <Navigate to={"home"} replace={true} />,
         },
         {
           path: "home",
@@ -36,28 +37,25 @@ function MainRoute() {
           element: <Profile />,
         },
         {
-            path:'signin',
-            element:<Sigin/>
+          path: "signin",
+          element: <Sigin />,
         },
         {
-            path:'signup',
-            element:<Signup/>
+          path: "signup",
+          element: <Signup />,
         },
-        
-
       ],
     },
     {
-        path:"*",
-        element:<div>404 error :: page not found</div>
-    }
+      path: "*",
+      element: <div>404 error :: page not found</div>,
+    },
   ]);
   return (
     <>
-    <Suspense fallback={<Loading/>}>
-      <RouterProvider router={router}></RouterProvider>
-
-    </Suspense>
+      <Suspense fallback={<Loading />}>
+        <RouterProvider router={router}></RouterProvider>
+      </Suspense>
     </>
   );
 }
