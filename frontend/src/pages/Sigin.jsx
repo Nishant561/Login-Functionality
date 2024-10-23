@@ -3,12 +3,13 @@ import '../App.css'
 
 import { useDispatch, useSelector } from 'react-redux'
 import { signinFailure,signinSuccess,signinStart } from '../redux/slices/userSlice'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import toast,{ Toaster } from 'react-hot-toast'
 import toastMessage from '../utils/Error'
 
 function Sigin() {
 
+  const navigate = useNavigate()
   const {currentUser ,appLoading , appError} = useSelector((state)=> state.user)
   const dispatch = useDispatch()
   const [formData, setFormData] = useState({});
@@ -37,6 +38,9 @@ function Sigin() {
       if(data.success === true){
         dispatch(signinSuccess(data.data.user))
         toastMessage(data.message , true)
+        setTimeout(()=>{
+            navigate('/home')
+        },1000)
       }else{
         dispatch(signinFailure(data))
         toastMessage(data.message , false)

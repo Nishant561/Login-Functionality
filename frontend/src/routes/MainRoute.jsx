@@ -6,6 +6,7 @@ import {
   Navigate,
 } from "react-router-dom";
 import Loading from "../components/Loading";
+import Protect from "../components/Protect";
 
 const Home = lazy(() => import("../pages/Home"));
 const Profile = lazy(() => import("../pages/Profile"));
@@ -38,11 +39,18 @@ function MainRoute() {
         },
         {
           path: "signin",
-          element: <Sigin />,
+          element: <Protect/>,
+          children:[
+            {path:"" , element:<Sigin/>}
+          ]
+          
         },
         {
           path: "signup",
-          element: <Signup />,
+          element: <Protect/>,
+          children:[
+            {path:"" , element:<Signup/>}
+          ]
         },
       ],
     },

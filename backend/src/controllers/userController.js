@@ -55,7 +55,7 @@ exports.login = asyncHandler(async (request, response, next) => {
   });
 
   response.cookie("token", token, {
-    expires: new Date(Date.now() + 100000),
+    maxAge:24 * 60 * 60 * 1000
   });
 
   return response.status(200).json({
