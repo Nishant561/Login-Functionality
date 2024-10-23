@@ -1,6 +1,9 @@
 import React from 'react'
+import { useSelector } from 'react-redux'
 import {Link ,NavLink} from 'react-router-dom'
+
 function Header() {
+  const {currentUser} = useSelector((state) => state.user)
   return (
     <>
         <div className='navbar w-full bg-[#16423C] h-[78px] py-4 '>
@@ -19,9 +22,16 @@ function Header() {
                             </NavLink>
                           </li>
                           <li>
-                            <NavLink to={'/signin'} className={({isActive})=>`${isActive?"text-[#73EC8B]" :"text-[#E9EFEC]"} text-2xl font-semibold`}>
+
+                            {
+                              currentUser? <Link to={'/profile'}><div className=''>
+                              <img className='w-[47px] object-cover object-center h-[47px] rounded-full' src={'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png'} />
+                          </div></Link> : <NavLink to={'/signin'} className={({isActive})=>`${isActive?"text-[#73EC8B]" :"text-[#E9EFEC]"} text-2xl font-semibold`}>
                               Signin
                             </NavLink>
+                            }
+                            
+                            
                           </li>
 
                       </ul>
