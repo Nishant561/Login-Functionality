@@ -66,3 +66,18 @@ exports.login = asyncHandler(async (request, response, next) => {
     },
   });
 });
+
+exports.handelSignout = asyncHandler(async(request , response , next)=>{
+    const token = request.cookies.token
+    if(!token){
+      return next(errorHandler(404,"You need to login to signout."))
+    }
+
+    response.clearCookie('token')
+
+    return response.status(200).json({
+      success:true,
+      message:"Signout successfully."
+    })
+
+} )

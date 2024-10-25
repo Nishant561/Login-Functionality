@@ -31,6 +31,10 @@ const userSlice = createSlice({
       state.appLoading = false;
     state.appError = action.payload || false;
     },
+
+    frontsignOut:(state,action)=>{
+      state.currentUser = null
+    }
   },
 });
 
@@ -41,6 +45,7 @@ export const {
   signinFailure,
   signinStart,
   signinSuccess,
+  frontsignOut
 } = userSlice.actions;
 
 export default userSlice.reducer;

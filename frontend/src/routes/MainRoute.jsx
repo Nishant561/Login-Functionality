@@ -7,6 +7,7 @@ import {
 } from "react-router-dom";
 import Loading from "../components/Loading";
 import Protect from "../components/Protect";
+import ProfileProtector from "../components/ProfileProtector";
 
 const Home = lazy(() => import("../pages/Home"));
 const Profile = lazy(() => import("../pages/Profile"));
@@ -35,7 +36,13 @@ function MainRoute() {
         },
         {
           path: "profile",
-          element: <Profile />,
+          element: <ProfileProtector/>,
+          children:[
+            {
+              path:'',
+              element:<Profile/>
+            }
+          ]
         },
         {
           path: "signin",

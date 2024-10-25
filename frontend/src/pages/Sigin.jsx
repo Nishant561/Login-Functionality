@@ -6,6 +6,7 @@ import { signinFailure,signinSuccess,signinStart } from '../redux/slices/userSli
 import { Link, useNavigate } from 'react-router-dom'
 import toast,{ Toaster } from 'react-hot-toast'
 import toastMessage from '../utils/Error'
+import GoogleAuth from '../components/GoogleAuth'
 
 function Sigin() {
 
@@ -91,6 +92,7 @@ function Sigin() {
               {appLoading ? "Loading..." : "Sign in"}
             </button>
           </form>
+          <GoogleAuth />
           <p className="mt-4 w-full text-center">
             <span className="">
               Don't have an account?{" "}
@@ -99,6 +101,7 @@ function Sigin() {
               </Link>
             </span>
           </p>
+          
           {/* {appError && (
             <p className="text-center">
               <span className="text-sm font-medium text-red-600">
