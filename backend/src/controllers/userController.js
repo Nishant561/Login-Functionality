@@ -4,6 +4,8 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
 dotenv.config({ path: "config.env" });
+
+
 function asyncHandler(func) {
   return (request, response, next) => {
     func(request, response, next).catch((err) => next(err));
@@ -81,3 +83,53 @@ exports.handelSignout = asyncHandler(async(request , response , next)=>{
     })
 
 } )
+
+exports.handelGoogleSignin = asyncHandler(async(request, response,next)=>{
+    const {username , email, profilePicture} = request.body
+    
+    const existingUser = await User.findOne({email})
+    if(existingUser){
+      const token = jwt.sign({id:existingUser._id},process.env.SECRET_KEY,{
+        expiresIn:"1h"
+      })
+      response.cookie('token',token,{
+        maxAge: 24 * 60 * 60 * 1000
+      })
+      return response.status(200).json({
+        success:true,
+        message:"Logged in successfully.",
+        data:{
+          user:existingUser
+        }
+      })
+    }
+
+    const modUsername = username.split(" ").join("") + String(Math.floor(Math.random()*1000))
+    
+    const user = new User({
+      username:modUsername,
+      email,
+      profilePicture:profilePicture
+    })
+
+    await user.save({validateBeforeSave:false})
+
+    const token = jwt.sign({id:user._id} , process.env.SECRET_KEY,{
+      expiresIn:"1h"
+    })
+
+    response.cookie('token', token ,{
+      maxAge:24*60*60*1000
+    })
+
+    return response.status(200).json({
+      success:true,
+      message:"logged in successfully.",
+      data:{
+        user:user
+      }
+    })
+
+
+
+})

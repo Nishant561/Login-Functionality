@@ -1,11 +1,10 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, NavLink } from "react-router-dom";
 import { frontsignOut, signinFailure } from "../redux/slices/userSlice";
 import { persistor } from "../redux/store";
 import toastMessage from "../utils/Error";
 import { Toaster } from "react-hot-toast";
-
 
 function Header() {
   const { currentUser } = useSelector((state) => state.user);
@@ -19,10 +18,10 @@ function Header() {
       const data = await response.json();
       if (data.success) {
         dispatch(frontsignOut());
-        toastMessage("Logged Out successfully." , true)
-        setTimeout(async()=>{
+        toastMessage("Logged Out successfully.", true);
+        setTimeout(async () => {
           await persistor.purge();
-        },1000)
+        }, 1000);
       } else {
         console.log(data.message);
       }
@@ -30,6 +29,7 @@ function Header() {
       console.log(error);
     }
   };
+
   return (
     <>
       <div className="navbar w-full bg-[#16423C] h-[78px] py-4 ">
@@ -77,10 +77,14 @@ function Header() {
                 <Link to={"/profile"}>
                   <div className="">
                     <img
-                      className="w-[47px] object-cover object-center h-[47px] rounded-full"
+                      className="w-[47px] object-cover object-center block h-[47px] rounded-full"
                       src={
-                        "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
+                        currentUser?.profilePicture
+                          ? encodeURI(currentUser.profilePicture)
+                          : "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
                       }
+                      alt={"profile url"}
+                      referrerPolicy="no-referrer"
                     />
                   </div>
                 </Link>
@@ -99,7 +103,7 @@ function Header() {
             </li>
           </ul>
         </div>
-        <Toaster/>
+        <Toaster />
       </div>
     </>
   );
