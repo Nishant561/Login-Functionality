@@ -18,7 +18,7 @@ function GoogleAuth() {
             const auth = getAuth(app)
             signInWithPopup(auth,provider)
             .then(async(result)=>{
-                console.log(result)
+                
                 const {displayName , email , photoURL}= result.user
                 const formData = {
                     username: displayName,

@@ -5,7 +5,6 @@ const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
 dotenv.config({ path: "config.env" });
 
-
 function asyncHandler(func) {
   return (request, response, next) => {
     func(request, response, next).catch((err) => next(err));
@@ -46,7 +45,7 @@ exports.login = asyncHandler(async (request, response, next) => {
   if (!user) return next(errorHandler(409, "User dosent exits."));
 
   const isPasswordCorrect = await bcrypt.compare(password, user.password);
-  
+
   if (!isPasswordCorrect)
     return next(errorHandler(404, "password dosent matched"));
 
@@ -57,7 +56,7 @@ exports.login = asyncHandler(async (request, response, next) => {
   });
 
   response.cookie("token", token, {
-    maxAge:24 * 60 * 60 * 1000
+    maxAge: 24 * 60 * 60 * 1000,
   });
 
   return response.status(200).json({
@@ -69,67 +68,102 @@ exports.login = asyncHandler(async (request, response, next) => {
   });
 });
 
-exports.handelSignout = asyncHandler(async(request , response , next)=>{
-    const token = request.cookies.token
-    if(!token){
-      return next(errorHandler(404,"You need to login to signout."))
-    }
+exports.handelSignout = asyncHandler(async (request, response, next) => {
+  const token = request.cookies.token;
+  if (!token) {
+    return next(errorHandler(404, "You need to login to signout."));
+  }
 
-    response.clearCookie('token')
+  response.clearCookie("token");
 
+  return response.status(200).json({
+    success: true,
+    message: "Signout successfully.",
+  });
+});
+
+exports.handelGoogleSignin = asyncHandler(async (request, response, next) => {
+  const { username, email, profilePicture } = request.body;
+
+  const existingUser = await User.findOne({ email });
+  if (existingUser) {
+    const token = jwt.sign({ id: existingUser._id }, process.env.SECRET_KEY, {
+      expiresIn: "1h",
+    });
+    response.cookie("token", token, {
+      maxAge: 24 * 60 * 60 * 1000,
+    });
     return response.status(200).json({
-      success:true,
-      message:"Signout successfully."
-    })
+      success: true,
+      message: "Logged in successfully.",
+      data: {
+        user: existingUser,
+      },
+    });
+  }
 
-} )
+  const modUsername =
+    username.split(" ").join("") + String(Math.floor(Math.random() * 1000));
 
-exports.handelGoogleSignin = asyncHandler(async(request, response,next)=>{
-    const {username , email, profilePicture} = request.body
-    
-    const existingUser = await User.findOne({email})
-    if(existingUser){
-      const token = jwt.sign({id:existingUser._id},process.env.SECRET_KEY,{
-        expiresIn:"1h"
-      })
-      response.cookie('token',token,{
-        maxAge: 24 * 60 * 60 * 1000
-      })
-      return response.status(200).json({
-        success:true,
-        message:"Logged in successfully.",
-        data:{
-          user:existingUser
-        }
-      })
+  const user = new User({
+    username: modUsername,
+    email,
+    profilePicture: profilePicture,
+  });
+
+  await user.save({ validateBeforeSave: false });
+
+  const token = jwt.sign({ id: user._id }, process.env.SECRET_KEY, {
+    expiresIn: "1h",
+  });
+
+  response.cookie("token", token, {
+    maxAge: 24 * 60 * 60 * 1000,
+  });
+
+  return response.status(200).json({
+    success: true,
+    message: "logged in successfully.",
+    data: {
+      user: user,
+    },
+  });
+});
+
+exports.handelUpdate = asyncHandler(async (request, response, next) => {
+  const userId = request.params.id;
+  const { username, email, password, profilePicture } = request.body;
+
+  const isExistingUsername = await User.findOne({
+    $or: [{ username: username }, { email: email }],
+  });
+
+  if (isExistingUsername) return next(404, "Use another email and username");
+
+  const userToUpdate = await User.findByIdAndUpdate(
+    userId,
+    {
+      $set: { username: username, profilePicture: profilePicture },
+    },
+    { new: true }
+  );
+  const {password:undefined , ...rest} = userToUpdate._doc
+  return response.status(200).json({
+    success:true,
+    message:"Data updated successfully",
+    data:{
+      user:rest
     }
+  })
+});
 
-    const modUsername = username.split(" ").join("") + String(Math.floor(Math.random()*1000))
-    
-    const user = new User({
-      username:modUsername,
-      email,
-      profilePicture:profilePicture
-    })
+exports.deleteUser = asyncHandler(async(request,response , next)=>{
+  const userId = request.params.id
+  const userToBeDeleted = await User.findByIdAndDelete(userId)
 
-    await user.save({validateBeforeSave:false})
-
-    const token = jwt.sign({id:user._id} , process.env.SECRET_KEY,{
-      expiresIn:"1h"
-    })
-
-    response.cookie('token', token ,{
-      maxAge:24*60*60*1000
-    })
-
-    return response.status(200).json({
-      success:true,
-      message:"logged in successfully.",
-      data:{
-        user:user
-      }
-    })
-
-
-
+  return response.status(200).json({
+    success:true,
+    message:"Account deleted",
+    data:null
+  })
 })
