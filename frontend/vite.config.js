@@ -7,7 +7,7 @@ export default defineConfig({
   server:{
     proxy:{
       '/api':{
-        target:'http://localhost:8000',
+        target:'https://login-functionality-m40j.onrender.com',
         changeOrigin:true
 
       }
